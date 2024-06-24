@@ -21,20 +21,20 @@ args = parser.parse_args()
 
 logging.basicConfig(level=args.loglevel, format='%(levelname)s: %(message)s')
 
-if args.rtmidi:
-  from prodj.midi.midiclock_rtmidi import MidiClock
-else:
-  from prodj.midi.midiclock_alsaseq import MidiClock
+# if args.rtmidi:
+#   from prodj.midi.midiclock_rtmidi import MidiClock
+# else:
+#   from prodj.midi.midiclock_alsaseq import MidiClock
 
-c = MidiClock()
+# c = MidiClock()
 
-if args.list_ports:
-  for id, name, ports in c.iter_alsa_seq_clients():
-    logging.info("MIDI device %d: %s, ports: %s",
-      id, name, ', '.join([str(x) for x in ports]))
-  sys.exit(0)
+# if args.list_ports:
+#   for id, name, ports in c.iter_alsa_seq_clients():
+#     logging.info("MIDI device %d: %s, ports: %s",
+#       id, name, ', '.join([str(x) for x in ports]))
+#   sys.exit(0)
 
-c.open(args.device, args.port)
+# c.open(args.device, args.port)
 
 p = ProDj()
 p.cl.log_played_tracks = False
@@ -42,7 +42,7 @@ p.cl.auto_request_beatgrid = False
 
 bpm = 128 # default bpm until reported from player
 beat = 0
-c.setBpm(bpm)
+# c.setBpm(bpm)
 
 def update_master(player_number):
   global bpm, beat, p
@@ -64,9 +64,9 @@ p.set_client_change_callback(update_master)
 try:
   p.start()
   p.vcdj_enable()
-  c.start()
+  #c.start()
   p.join()
 except KeyboardInterrupt:
   logging.info("Shutting down...")
-  c.stop()
+  #c.stop()
   p.stop()

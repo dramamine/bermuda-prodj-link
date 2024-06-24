@@ -44,7 +44,8 @@ class NfsClient:
   def openSockets(self):
     self.rpc_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     self.rpc_sock.bind(("0.0.0.0", 0))
-    self.loop.add_reader(self.rpc_sock, self.receiver.socketRead, self.rpc_sock)
+
+    # self.loop.add_reader(self.rpc_sock, self.receiver.socketRead, self.rpc_sock)
 
   def closeSockets(self):
     self.loop.remove_reader(self.rpc_sock)

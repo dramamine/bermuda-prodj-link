@@ -25,11 +25,11 @@ class ProDj(Thread):
     self.vcdj = Vcdj(self)
     self.nfs = NfsClient(self)
     self.keepalive_ip = "0.0.0.0"
-    self.keepalive_port = 50000
+    self.keepalive_port = 60000
     self.beat_ip = "0.0.0.0"
     self.beat_port = 50001
     self.status_ip = "0.0.0.0"
-    self.status_port = 50002
+    self.status_port = 60002
     self.need_own_ip = OwnIpStatus.notNeeded
     self.own_ip = None
 
@@ -38,13 +38,16 @@ class ProDj(Thread):
     self.keepalive_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     self.keepalive_sock.bind((self.keepalive_ip, self.keepalive_port))
     logging.info("Listening on {}:{} for keepalive packets".format(self.keepalive_ip, self.keepalive_port))
+
     self.beat_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     self.beat_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     self.beat_sock.bind((self.beat_ip, self.beat_port))
     logging.info("Listening on {}:{} for beat packets".format(self.beat_ip, self.beat_port))
+
     self.status_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     self.status_sock.bind((self.status_ip, self.status_port))
     logging.info("Listening on {}:{} for status packets".format(self.status_ip, self.status_port))
+
     self.socks = [self.keepalive_sock, self.beat_sock, self.status_sock]
     self.keep_running = True
     self.data.start()
@@ -86,16 +89,16 @@ class ProDj(Thread):
           data, addr = self.keepalive_sock.recvfrom(128)
           self.handle_keepalive_packet(data, addr)
         elif sock == self.beat_sock:
-          data, addr = self.beat_sock.recvfrom(128)
+          data, addr = self.beat_sock.recvfrom(256)
           self.handle_beat_packet(data, addr)
         elif sock == self.status_sock:
-          data, addr = self.status_sock.recvfrom(256)
+          data, addr = self.status_sock.recvfrom(512)
           self.handle_status_packet(data, addr)
       self.cl.gc()
     logging.debug("main loop finished")
 
   def handle_keepalive_packet(self, data, addr):
-    #logging.debug("Broadcast keepalive packet from {}".format(addr))
+    logging.debug("Broadcast keepalive packet from {}".format(addr))
     try:
       packet = packets.KeepAlivePacket.parse(data)
     except Exception as e:
@@ -113,7 +116,7 @@ class ProDj(Thread):
     packets_dump.dump_keepalive_packet(packet)
 
   def handle_beat_packet(self, data, addr):
-    #logging.debug("Broadcast beat packet from {}".format(addr))
+    logging.debug("Broadcast beat packet from {}".format(addr))
     try:
       packet = packets.BeatPacket.parse(data)
     except Exception as e:
@@ -125,7 +128,7 @@ class ProDj(Thread):
     packets_dump.dump_beat_packet(packet)
 
   def handle_status_packet(self, data, addr):
-    #logging.debug("Broadcast status packet from {}".format(addr))
+    logging.debug("Broadcast status packet from {}".format(addr))
     try:
       packet = packets.StatusPacket.parse(data)
     except Exception as e:
