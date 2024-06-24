@@ -3,4 +3,5 @@ stuff
 .idea/
 databases/
 tracks.log
-pypcap/
+pypcap/*
+

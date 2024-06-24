@@ -13,7 +13,11 @@ pip install image-similarity-measures
 # 10.3.0
 pip install --upgrade Pillow
 
-pip instal pyfftw
+pip install pyfftw
+
+# Raspberry Pi Only
+pip install -r requirements.txt
+python monitor-simple.py
 
 
 
