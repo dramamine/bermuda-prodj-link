@@ -25,11 +25,11 @@ class ProDj(Thread):
     self.vcdj = Vcdj(self)
     self.nfs = NfsClient(self)
     self.keepalive_ip = "0.0.0.0"
-    self.keepalive_port = 60000
+    self.keepalive_port = 50000
     self.beat_ip = "0.0.0.0"
     self.beat_port = 50001
     self.status_ip = "0.0.0.0"
-    self.status_port = 60002
+    self.status_port = 50002
     self.need_own_ip = OwnIpStatus.notNeeded
     self.own_ip = None
 
@@ -48,6 +48,10 @@ class ProDj(Thread):
     self.status_sock.bind((self.status_ip, self.status_port))
     logging.info("Listening on {}:{} for status packets".format(self.status_ip, self.status_port))
 
+    self.output_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # self.output_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    # self.output_sock.bind(("127.0.0.1", 60000))
+
     self.socks = [self.keepalive_sock, self.beat_sock, self.status_sock]
     self.keep_running = True
     self.data.start()
@@ -62,6 +66,7 @@ class ProDj(Thread):
     self.join()
     self.keepalive_sock.close()
     self.beat_sock.close()
+    self.output_sock.close()
 
   def vcdj_set_player_number(self, vcdj_player_number=5):
     logging.info("Player number set to {}".format(vcdj_player_number))

@@ -21,6 +21,10 @@ def print_clients(player_number):
       logging.info("Player {}: {} {} BPM Pitch {:.2f}% ({:.2f}%) Beat {} Beatcnt {} pos {:.6f}".format(
         c.player_number, c.model, c.bpm, (c.pitch-1)*100, (c.actual_pitch-1)*100, c.beat, c.beat_count,
         c.position if c.position is not None else 0))
+      p.output_sock.sendto('bpm,pitch,actual_pitch,beat,beat_count'.encode(), ("127.0.0.1", 60000))
+      p.output_sock.sendto('{},{},{},{},{}'.format(c.bpm, c.pitch, c.actual_pitch, c.beat, c.beat_count).encode(), ("127.0.0.1", 60000))
+
+  # p.output_sock.send(b'hello')
 
 def print_metadata(player_number, md):
   logging.info("Player {} playing {} - {} ({}) {}:{} {} BPM".format(player_number,
