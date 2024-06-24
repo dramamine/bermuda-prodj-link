@@ -1,3 +1,4 @@
+```bash
 # create virtual environment named `venv`
 virtualenv venv
 
@@ -55,3 +56,4 @@ pip install scapy
 
 cd /e/git/python-prodj-link/
 python listener.py
+```
